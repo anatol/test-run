@@ -41,6 +41,8 @@ color_stdout = Colorer()
 
 def find_in_path(name):
     path = os.curdir + os.pathsep + os.environ["PATH"]
+    if os.environ.get("TARANTOOL_PATH"):
+        path = os.environ.get("TARANTOOL_PATH") + os.pathsep + path
     for _dir in path.split(os.pathsep):
         exe = os.path.join(_dir, name)
         if os.access(exe, os.X_OK):
@@ -465,6 +467,8 @@ class TarantoolServer(Server):
         cls.builddir = os.path.abspath(builddir)
         builddir = os.path.join(builddir, "src")
         path = builddir + os.pathsep + os.environ["PATH"]
+        if os.environ.get("TARANTOOL_PATH"):
+            path = os.environ.get("TARANTOOL_PATH") + os.pathsep + path
         if not silent:
             color_stdout("Looking for server binary in ", schema='serv_text')
             color_stdout(path + ' ...\n', schema='path')
@@ -480,7 +484,7 @@ class TarantoolServer(Server):
                 ctl = os.path.join(ctl_dir, '../extra/dist', cls.default_tarantool['ctl'])
             if os.access(exe, os.X_OK) and os.access(ctl, os.X_OK):
                 cls.binary = os.path.abspath(exe)
-                os.environ["PATH"] = os.path.abspath(_dir) + ":" + os.environ["PATH"]
+                os.environ["PATH"] = os.path.abspath(_dir) + os.pathsep + os.environ["PATH"]
                 cls.ctl_path = os.path.abspath(ctl)
                 return exe
         raise RuntimeError("Can't find server executable in " + path)
