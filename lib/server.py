@@ -21,15 +21,6 @@ class Server(object):
             return
         self._vardir = os.path.abspath(path)
 
-    def __new__(cls, ini=None):
-        if ini == None or 'core' not in ini or ini['core'] is None:
-            return object.__new__(cls)
-        core = ini['core'].lower().strip()
-        cls.mdlname = "lib.{0}_server".format(core.replace(' ', '_'))
-        cls.clsname = "{0}Server".format(core.title().replace(' ', ''))
-        corecls = __import__(cls.mdlname, fromlist=cls.clsname).__dict__[cls.clsname]
-        return corecls.__new__(corecls, core)
-
     def __init__(self, ini):
         self.core = ini['core']
         self.ini = ini

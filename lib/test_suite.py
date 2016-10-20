@@ -6,6 +6,8 @@ from lib.colorer import Colorer
 from lib.inspector import TarantoolInspector
 from lib.server import Server
 from lib.tarantool_server import TarantoolServer
+from lib.app_server import AppServer
+from lib.unittest_server import UnittestServer
 from lib.utils import check_valgrind_log, print_tail_n
 
 color_stdout = Colorer()
@@ -26,6 +28,13 @@ class TestSuite:
     server for this suite, the client program to execute individual
     tests and other suite properties. The server is started once per
     suite."""
+    server_class = {
+        'app': AppServer,
+        'unittest': UnittestServer,
+        'tarantool': TarantoolServer,
+        'stress': TarantoolServer
+    }
+
     def get_multirun_conf(self, suite_path):
         conf_name = self.ini.get('config', None)
         if conf_name is None:
@@ -82,10 +91,8 @@ class TestSuite:
             self.ini[i] = map(lambda x: os.path.join(suite_path, x),
                     dict.fromkeys(self.ini[i].split()) if i in self.ini else dict())
         try:
-            if self.ini['core'] in ['tarantool', 'stress']:
-                self.server = TarantoolServer(self.ini)
-            else:
-                self.server = Server(self.ini)
+            kind = self.ini['core']
+            self.server = self.server_class[kind](self.ini)
             self.ini["server"] = self.server
         except Exception as e:
             print e

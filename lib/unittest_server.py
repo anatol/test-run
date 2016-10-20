@@ -16,10 +16,6 @@ class UnitTest(Test):
         sys.stdout.write(proc.communicate()[0])
 
 class UnittestServer(Server):
-    """A dummy server implementation for unit test suite"""
-    def __new__(cls, ini=None):
-        return Server.__new__(cls)
-
     def __init__(self, _ini=None):
         if _ini is None:
             _ini = {}

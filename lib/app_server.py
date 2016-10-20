@@ -30,10 +30,6 @@ class AppTest(Test):
         tarantool.join()
 
 class AppServer(Server):
-    """A dummy server implementation for application server tests"""
-    def __new__(cls, ini=None):
-        return Server.__new__(cls)
-
     def __init__(self, _ini=None):
         if _ini is None:
             _ini = {}
